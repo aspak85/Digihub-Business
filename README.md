@@ -46,3 +46,4 @@ Test keys (`rzp_test_...`) never charge real money. When your Razorpay account i
 ## Notes
 - `.env` / `.env.example` are for **local testing only** (`netlify dev`) — not required for the live site once env vars are set in Netlify's dashboard.
 - Never commit a real `.env` file — `.gitignore` already excludes it.
+<!-- redeploy trigger -->
