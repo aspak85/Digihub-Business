@@ -75,18 +75,19 @@
     border-bottom:1px solid var(--line);
   }
   .logo{
-    font-family:var(--font-head); font-weight:700; font-size:1.4rem; letter-spacing:0.5px;
-    display:flex; align-items:center; gap:2px;
+    font-family:var(--font-head); font-weight:700; font-size:1.4rem; letter-spacing:0.3px;
+    display:flex; align-items:center; gap:1px; white-space:nowrap;
   }
   .logo .i-play{
-    position:relative; display:inline-block; width:0.9em; text-align:center;
+    position:relative; display:inline-flex; align-items:center; justify-content:center;
+    width:0.6em; height:1em; color:transparent; flex-shrink:0;
   }
   .logo .i-play::before{
-    content:''; position:absolute; left:50%; top:0.05em; transform:translateX(-50%);
+    content:''; position:absolute; top:52%; left:50%; transform:translate(-50%,-50%);
     width:0; height:0;
-    border-top:0.32em solid transparent;
-    border-bottom:0.32em solid transparent;
-    border-left:0.42em solid var(--red);
+    border-top:0.3em solid transparent;
+    border-bottom:0.3em solid transparent;
+    border-left:0.4em solid var(--red);
     filter:drop-shadow(0 0 6px rgba(255,0,0,0.8));
   }
   .nav-links{display:flex; gap:32px; font-size:0.92rem; color:rgba(244,244,248,0.75);}
@@ -451,6 +452,7 @@
     <a href="#about">About</a>
     <a href="#services">Services</a>
     <a href="#process">Process</a>
+    <a href="#how-youtube-works">How It Works (YT)</a>
     <a href="#pricing">Pricing</a>
     <a href="#contact">Contact</a>
   </div>
@@ -543,6 +545,34 @@
             <circle cx="220" cy="20" r="5" fill="#ff2fa0"/>
           </svg>
           <div class="snap-label">Growth Trajectory Tracking</div>
+        </div>
+        <div class="snap-card">
+          <svg viewBox="0 0 260 150" width="100%" height="140">
+            <rect x="0" y="0" width="260" height="150" rx="14" fill="#14141f"/>
+            <text x="45" y="58" fill="rgba(244,244,248,0.5)" font-size="10" text-anchor="middle" font-family="monospace">BEFORE</text>
+            <text x="45" y="86" fill="#f4f4f8" font-size="21" text-anchor="middle" font-family="monospace" font-weight="bold">1.2K</text>
+            <defs><marker id="arrowHead" markerWidth="8" markerHeight="8" refX="4" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#ff2fa0"/></marker></defs>
+            <path d="M95 72 L150 72" stroke="#ff2fa0" stroke-width="3" marker-end="url(#arrowHead)"/>
+            <text x="205" y="58" fill="rgba(0,224,255,0.85)" font-size="10" text-anchor="middle" font-family="monospace">AFTER</text>
+            <text x="205" y="86" fill="#00e0ff" font-size="23" text-anchor="middle" font-family="monospace" font-weight="bold">8.4K</text>
+            <text x="130" y="125" fill="rgba(244,244,248,0.6)" font-size="11" text-anchor="middle" font-family="monospace">subscribers in 60 days</text>
+          </svg>
+          <div class="snap-label">Subscriber Growth Snapshot</div>
+        </div>
+        <div class="snap-card">
+          <svg viewBox="0 0 260 150" width="100%" height="140">
+            <rect x="0" y="0" width="260" height="150" rx="14" fill="#14141f"/>
+            <text x="20" y="32" fill="#f4f4f8" font-size="10.5" font-family="monospace">Subscribers · 1,000 goal</text>
+            <rect x="20" y="40" width="220" height="9" rx="4.5" fill="rgba(255,255,255,0.08)"/>
+            <rect x="20" y="40" width="220" height="9" rx="4.5" fill="#ff2fa0"/>
+            <text x="20" y="78" fill="#f4f4f8" font-size="10.5" font-family="monospace">Watch hours · 4,000 goal</text>
+            <rect x="20" y="86" width="220" height="9" rx="4.5" fill="rgba(255,255,255,0.08)"/>
+            <rect x="20" y="86" width="168" height="9" rx="4.5" fill="#00e0ff"/>
+            <circle cx="222" cy="118" r="13" fill="none" stroke="#7b2ff7" stroke-width="2.5"/>
+            <path d="M216 118 l4 4 l9 -9" stroke="#7b2ff7" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <text x="20" y="122" fill="rgba(244,244,248,0.6)" font-size="10" font-family="monospace">Eligibility check</text>
+          </svg>
+          <div class="snap-label">Monetization Eligibility Tracker</div>
         </div>
       </div>
       <div class="carousel-dots" id="snapDots"></div>
@@ -648,6 +678,38 @@
           <button class="arrow-btn" id="stepPrev" aria-label="Previous step">‹</button>
           <button class="arrow-btn" id="stepNext" aria-label="Next step">›</button>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how-youtube-works">
+  <div class="wrap tight">
+    <div class="section-head reveal">
+      <div class="eyebrow">The Real Picture</div>
+      <h2>How YouTube growth &amp; monetization actually work.</h2>
+      <p>No vague promises — here's the real mechanics behind how a channel goes from zero to earning.</p>
+    </div>
+    <div class="service-grid">
+      <div class="tilt-card reveal">
+        <div class="num">Eligibility</div>
+        <h3>What YouTube actually requires</h3>
+        <p>To join the Partner Program, a channel needs 1,000 subscribers and either 4,000 public watch hours in the last 12 months, or 10 million Shorts views in 90 days — plus a clean copyright and community guidelines record. We track both numbers for you every week.</p>
+      </div>
+      <div class="tilt-card reveal">
+        <div class="num">Daily Engine</div>
+        <h3>Why daily uploads matter</h3>
+        <p>YouTube's algorithm favors channels that post consistently — it has more data points to learn who to recommend your content to. Daily faceless videos keep your channel active in the recommendation system instead of going quiet between uploads.</p>
+      </div>
+      <div class="tilt-card reveal">
+        <div class="num">Algorithm</div>
+        <h3>What actually drives growth</h3>
+        <p>Three signals matter most: click-through rate (does the thumbnail/title earn a click), average view duration (do people keep watching), and session time (does your video keep people on YouTube). Every script and thumbnail we make is built around these three.</p>
+      </div>
+      <div class="tilt-card reveal">
+        <div class="num">Monetization</div>
+        <h3>After you're eligible</h3>
+        <p>Once thresholds are hit, we walk you through the AdSense linking and Partner Program application, then shift focus to ad revenue optimization, mid-roll placement, and — for Gold &amp; Diamond plans — a digital product to add a second income stream beyond ads.</p>
       </div>
     </div>
   </div>
@@ -809,10 +871,10 @@
       <svg class="wa-icon" viewBox="0 0 24 24" fill="white"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.71.45 3.38 1.3 4.86L2 22l5.35-1.4a9.9 9.9 0 0 0 4.69 1.19h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2Z"/></svg>
       Get Started With Digihub Marketing
     </button>
-    <button id="payNowBtnFinal" class="btn-pay" style="font-size:0.95rem; padding:18px 30px;">
-      <svg class="pay-icon" viewBox="0 0 24 24" fill="none" stroke="#00e0ff" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M2 10h20"/></svg>
-      Pay ₹2,000 via Razorpay
-    </button>
+    <a href="https://wa.me/919714690087?text=Hi%20Digihub%2C%20I%20want%20to%20know%20more%20about%20your%20plans" target="_blank" class="btn-pay" style="font-size:0.95rem; padding:18px 30px;">
+      <svg class="wa-icon" viewBox="0 0 24 24" fill="#00e0ff"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.71.45 3.38 1.3 4.86L2 22l5.35-1.4a9.9 9.9 0 0 0 4.69 1.19h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2Z"/></svg>
+      Talk to Us on WhatsApp
+    </a>
   </div>
 </section>
 
@@ -865,9 +927,11 @@
     </form>
 
     <div class="modal-success" id="modalSuccess" style="display:none;">
-      <p>✅ Details received! Choose how you'd like to continue:</p>
-      <a href="#" id="successWA" target="_blank" class="btn-secondary" style="width:100%; justify-content:center; margin-top:12px;">📱 Send Details on WhatsApp</a>
-      <button type="button" id="payNowBtn" class="btn-primary" style="width:100%; justify-content:center; margin-top:12px;">💳 Pay ₹2,000 &amp; Confirm Slot</button>
+      <p>✅ Details received! Tap below to continue on WhatsApp — our team will confirm your slot and share the payment link personally.</p>
+      <a href="#" id="successWA" target="_blank" class="btn-primary" style="width:100%; justify-content:center; margin-top:14px;">
+        <svg class="wa-icon" viewBox="0 0 24 24" fill="white"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.71.45 3.38 1.3 4.86L2 22l5.35-1.4a9.9 9.9 0 0 0 4.69 1.19h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2Z"/></svg>
+        Continue on WhatsApp
+      </a>
     </div>
   </div>
 </div>
