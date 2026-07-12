@@ -1,59 +1,1296 @@
-function jsonResponse(obj, status = 200) {
-  return new Response(JSON.stringify(obj), {
-    status,
-    headers: { 'Content-Type': 'application/json' }
-  });
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digihub Marketing — Faceless Channel Growth Partner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0a0f;
+    --bg-deep:#1a1a2e;
+    --panel:rgba(26,26,46,0.55);
+    --panel-solid:#14141f;
+    --red:#ff0000;
+    --red-dim:#7a0000;
+    --cyan:#00e0ff;
+    --magenta:#ff2fa0;
+    --purple:#7b2ff7;
+    --white:#f4f4f8;
+    --line:rgba(244,244,248,0.09);
+    --font-head:'Space Grotesk', sans-serif;
+    --font-body:'Inter', sans-serif;
+    --font-mono:'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--white);
+    font-family:var(--font-body);
+    overflow-x:hidden;
+    line-height:1.6;
+  }
+  ::selection{background:var(--red); color:#fff;}
+  a{color:inherit; text-decoration:none;}
+  ::-webkit-scrollbar{width:10px;}
+  ::-webkit-scrollbar-track{background:var(--bg);}
+  ::-webkit-scrollbar-thumb{background:var(--red-dim); border-radius:10px;}
 
-export async function onRequestPost(context) {
-  const { request, env } = context;
+  :focus-visible{outline:2px solid var(--cyan); outline-offset:3px; border-radius:4px;}
 
-  let body;
-  try {
-    body = await request.json();
-  } catch (err) {
-    return jsonResponse({ error: 'Invalid JSON body' }, 400);
+  .noise{
+    position:fixed; inset:0; z-index:1; pointer-events:none; opacity:0.035; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
-  const amount = body.amount; // amount in paise
-  const currency = body.currency || 'INR';
-  const receipt = body.receipt || ('slot_' + Date.now());
-
-  if (!amount || typeof amount !== 'number' || amount < 100) {
-    return jsonResponse({ error: 'Amount must be a number of at least 100 paise (₹1)' }, 400);
+  .bg-glow{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(600px 600px at 15% 8%, rgba(255,0,0,0.16), transparent 60%),
+      radial-gradient(700px 700px at 85% 20%, rgba(0,224,255,0.12), transparent 60%),
+      radial-gradient(650px 650px at 75% 60%, rgba(255,47,160,0.10), transparent 60%),
+      radial-gradient(750px 750px at 20% 75%, rgba(123,47,247,0.10), transparent 60%),
+      radial-gradient(900px 900px at 50% 95%, rgba(26,26,46,0.6), transparent 70%);
   }
 
-  const keyId = env.RAZORPAY_KEY_ID;
-  const keySecret = env.RAZORPAY_KEY_SECRET;
+  .blob{
+    position:absolute; border-radius:50%; filter:blur(70px); opacity:0.35; pointer-events:none; z-index:0;
+    animation:blobDrift 18s ease-in-out infinite;
+  }
+  @keyframes blobDrift{ 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(30px,-40px) scale(1.1);} }
 
-  if (!keyId || !keySecret) {
-    return jsonResponse({ error: 'Razorpay keys are not configured on the server' }, 500);
+  section{position:relative; z-index:2;}
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 6vw;
+    background:rgba(10,10,15,0.55);
+    backdrop-filter:blur(16px) saturate(140%);
+    -webkit-backdrop-filter:blur(16px) saturate(140%);
+    border-bottom:1px solid var(--line);
+  }
+  .logo{
+    font-family:var(--font-head); font-weight:700; font-size:1.4rem; letter-spacing:0.3px;
+    display:flex; align-items:center; gap:1px; white-space:nowrap;
+  }
+  .logo .i-play{
+    position:relative; display:inline-flex; align-items:center; justify-content:center;
+    width:0.6em; height:1em; color:transparent; flex-shrink:0;
+  }
+  .logo .i-play::before{
+    content:''; position:absolute; top:52%; left:50%; transform:translate(-50%,-50%);
+    width:0; height:0;
+    border-top:0.3em solid transparent;
+    border-bottom:0.3em solid transparent;
+    border-left:0.4em solid var(--red);
+    filter:drop-shadow(0 0 6px rgba(255,0,0,0.8));
+  }
+  .nav-links{display:flex; gap:32px; font-size:0.92rem; color:rgba(244,244,248,0.75);}
+  .nav-links a:hover{color:var(--cyan);}
+  .nav-cta{
+    padding:10px 20px; border-radius:100px; font-size:0.88rem; font-weight:600;
+    background:linear-gradient(135deg, var(--red), #b30000);
+    box-shadow:0 4px 20px rgba(255,0,0,0.35);
+    border:1px solid rgba(255,255,255,0.15);
+    display:flex; align-items:center; gap:8px;
   }
 
-  const auth = btoa(keyId + ':' + keySecret);
+  @media (max-width:900px){ .nav-links{display:none;} }
 
-  try {
-    const rpRes = await fetch('https://api.razorpay.com/v1/orders', {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Basic ' + auth,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ amount, currency, receipt })
-    });
+  /* ---------- HERO ---------- */
+  .hero{
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+    padding:140px 6vw 80px; position:relative; overflow:hidden;
+  }
+  .hero-grid{
+    display:grid; grid-template-columns:1.1fr 0.9fr; gap:60px; max-width:1280px; width:100%; align-items:center;
+  }
+  .eyebrow{
+    font-family:var(--font-mono); font-size:0.78rem; letter-spacing:2px; color:var(--cyan);
+    text-transform:uppercase; display:flex; align-items:center; gap:10px; margin-bottom:20px;
+  }
+  .eyebrow::before{content:''; width:24px; height:1px; background:var(--cyan);}
+  .hero h1{
+    font-family:var(--font-head); font-weight:700; font-size:clamp(2.3rem, 5vw, 3.6rem);
+    line-height:1.08; letter-spacing:-1px;
+  }
+  .hero h1 .accent{
+    background:linear-gradient(120deg, var(--red), var(--magenta) 50%, var(--cyan));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .hero p.sub{
+    margin-top:24px; font-size:1.08rem; color:rgba(244,244,248,0.7); max-width:520px;
+  }
+  .hero-ctas{display:flex; gap:16px; margin-top:38px; flex-wrap:wrap;}
+  .btn-primary{
+    padding:15px 30px; border-radius:100px; font-weight:600; font-size:0.95rem;
+    background:linear-gradient(135deg, var(--red), #a80000);
+    box-shadow:0 8px 30px rgba(255,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.25);
+    border:1px solid rgba(255,255,255,0.1);
+    transition:transform 0.25s ease, box-shadow 0.25s ease;
+    cursor:pointer; display:inline-flex; align-items:center; gap:9px;
+  }
+  .btn-primary:hover{transform:translateY(-3px); box-shadow:0 14px 36px rgba(255,0,0,0.5);}
+  .btn-secondary{
+    padding:15px 28px; border-radius:100px; font-weight:600; font-size:0.95rem;
+    background:rgba(255,255,255,0.04); border:1px solid var(--line); backdrop-filter:blur(10px);
+    transition:all 0.25s ease; cursor:pointer; display:inline-flex; align-items:center; gap:9px;
+  }
+  .btn-secondary:hover{border-color:var(--cyan); color:var(--cyan);}
+  .btn-pay{
+    padding:12px 24px; border-radius:100px; font-weight:600; font-size:0.86rem;
+    background:linear-gradient(135deg, #1a1a2e, #24244a); border:1px solid rgba(0,224,255,0.35);
+    color:var(--cyan); display:inline-flex; align-items:center; gap:8px; transition:all 0.25s ease;
+  }
+  .btn-pay:hover{background:rgba(0,224,255,0.12); transform:translateY(-2px);}
+  .wa-icon, .pay-icon{width:16px; height:16px; flex-shrink:0;}
+  button.btn-primary, button.btn-secondary{font-family:inherit; color:inherit; outline:none;}
 
-    const data = await rpRes.json();
+  .hero-badge{
+    display:inline-flex; align-items:center; gap:8px; padding:8px 16px; border-radius:100px;
+    background:linear-gradient(135deg, rgba(255,47,160,0.16), rgba(0,224,255,0.16));
+    border:1px solid rgba(255,47,160,0.35); font-size:0.8rem; margin-bottom:18px; font-weight:600;
+  }
 
-    if (!rpRes.ok) {
-      const isAuthError = rpRes.status === 401;
-      return jsonResponse({
-        error: 'Razorpay order creation failed',
-        details: (data.error && data.error.description) || 'Unknown error'
-      }, isAuthError ? 401 : 500);
+  .price-sub{font-size:0.9rem; color:rgba(244,244,248,0.5); font-weight:400;}
+
+  .payment-steps{
+    margin-top:56px; padding:34px; border-radius:22px; background:var(--panel); border:1px solid var(--line);
+    backdrop-filter:blur(14px);
+  }
+  .pay-steps-title{font-family:var(--font-head); font-size:1.1rem; margin-bottom:20px; font-weight:600;}
+  .pay-steps-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px;}
+  .pay-step{display:flex; gap:14px; align-items:flex-start;}
+  .pay-step-n{
+    width:32px; height:32px; flex-shrink:0; border-radius:50%;
+    background:linear-gradient(135deg, var(--red), var(--magenta));
+    display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-weight:700; font-size:0.9rem;
+  }
+  .pay-step strong{font-size:0.92rem;}
+  .pay-step p{font-size:0.85rem; color:rgba(244,244,248,0.6); margin-top:4px;}
+  .refund-note{margin-top:26px; font-size:0.88rem; color:rgba(244,244,248,0.8); border-top:1px solid var(--line); padding-top:18px;}
+  @media (max-width:900px){ .pay-steps-grid{grid-template-columns:1fr;} }
+
+  /* ---------- SNAPSHOT CARDS ---------- */
+  .snap-card{
+    min-width:280px; flex-shrink:0; padding:24px; border-radius:20px; background:var(--panel); border:1px solid var(--line);
+    backdrop-filter:blur(14px); text-align:center;
+  }
+  .snap-label{margin-top:16px; font-family:var(--font-head); font-weight:600; font-size:0.95rem;}
+
+  /* ---------- REAL RESULT CARDS ---------- */
+  .result-card{
+    min-width:240px; flex-shrink:0; padding:16px; border-radius:20px; background:var(--panel); border:1px solid var(--line);
+    backdrop-filter:blur(14px); text-align:center;
+  }
+  .result-card img{
+    width:100%; height:340px; object-fit:cover; border-radius:12px; display:block;
+    border:1px solid var(--line);
+  }
+  .result-card .snap-label{font-size:0.85rem; line-height:1.4;}
+
+  /* ---------- BOOKING MODAL ---------- */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(5,5,10,0.78); backdrop-filter:blur(6px); z-index:300;
+    display:flex; align-items:center; justify-content:center; opacity:0; pointer-events:none;
+    transition:opacity 0.3s ease; padding:20px;
+  }
+  .modal-overlay.active{opacity:1; pointer-events:auto;}
+  .modal-box{
+    background:linear-gradient(160deg, rgba(26,26,46,0.97), rgba(10,10,15,0.99));
+    border:1px solid var(--line); border-radius:22px; padding:32px; max-width:440px; width:100%;
+    max-height:88vh; overflow-y:auto; position:relative; box-shadow:0 30px 80px rgba(0,0,0,0.6);
+    transform:translateY(20px); transition:transform 0.3s ease;
+  }
+  .modal-overlay.active .modal-box{transform:translateY(0);}
+  .modal-close{
+    position:absolute; top:14px; right:16px; background:none; border:none; color:var(--white);
+    font-size:1.6rem; cursor:pointer; line-height:1; width:32px; height:32px;
+  }
+  .modal-price{margin-top:6px; font-family:var(--font-mono); color:var(--cyan); font-size:0.88rem;}
+  #bookingForm label{display:block; margin-top:16px; font-size:0.85rem; color:rgba(244,244,248,0.7);}
+  #bookingForm input, #bookingForm textarea{
+    width:100%; margin-top:6px; padding:11px 14px; border-radius:10px; border:1px solid var(--line);
+    background:rgba(255,255,255,0.04); color:var(--white); font-family:var(--font-body); font-size:0.92rem; resize:vertical;
+  }
+  #bookingForm input:focus, #bookingForm textarea:focus{outline:none; border-color:var(--cyan);}
+  .modal-success p{font-size:0.95rem; color:rgba(244,244,248,0.85); margin-bottom:6px;}
+
+  .hero-stats-inline{display:flex; gap:32px; margin-top:44px; flex-wrap:wrap;}
+  .hero-stats-inline div{font-family:var(--font-mono);}
+  .hero-stats-inline .num{font-size:1.5rem; font-weight:700; color:var(--white);}
+  .hero-stats-inline .lbl{font-size:0.72rem; color:rgba(244,244,248,0.5); text-transform:uppercase; letter-spacing:1px;}
+
+  /* ---- Signature 3D piece ---- */
+  .orb-stage{ position:relative; height:480px; perspective:1200px; }
+  .orb-core{
+    position:absolute; top:50%; left:50%; width:170px; height:170px;
+    transform:translate(-50%,-50%) rotateX(15deg);
+    transform-style:preserve-3d; animation:coreSpin 16s linear infinite;
+  }
+  @keyframes coreSpin{ from{transform:translate(-50%,-50%) rotateX(15deg) rotateY(0deg);} to{transform:translate(-50%,-50%) rotateX(15deg) rotateY(360deg);} }
+  .orb-face{
+    position:absolute; inset:0; border-radius:50%;
+    background:radial-gradient(circle at 30% 30%, rgba(255,255,255,0.25), rgba(255,0,0,0.18) 40%, rgba(123,47,247,0.25) 75%);
+    border:1px solid rgba(255,255,255,0.25); backdrop-filter:blur(6px);
+    box-shadow:0 0 60px rgba(255,0,0,0.35), inset 0 0 40px rgba(255,255,255,0.08);
+  }
+  .orb-play{
+    position:absolute; top:50%; left:50%; transform:translate(-42%,-50%);
+    width:0; height:0; border-top:26px solid transparent; border-bottom:26px solid transparent;
+    border-left:38px solid var(--white); filter:drop-shadow(0 0 14px rgba(255,255,255,0.6));
+  }
+  .ring{ position:absolute; top:50%; left:50%; border-radius:50%; border:1px solid rgba(0,224,255,0.35); transform-style:preserve-3d; }
+  .ring1{width:320px; height:320px; margin:-160px 0 0 -160px; transform:rotateX(70deg); animation:ringSpin 20s linear infinite;}
+  .ring2{width:380px; height:380px; margin:-190px 0 0 -190px; transform:rotateX(70deg) rotateZ(60deg); border-color:rgba(255,47,160,0.3); animation:ringSpin 26s linear infinite reverse;}
+  @keyframes ringSpin{ from{transform:rotateX(70deg) rotateZ(0deg);} to{transform:rotateX(70deg) rotateZ(360deg);} }
+
+  .chip{
+    position:absolute; padding:9px 14px; border-radius:12px; font-family:var(--font-mono); font-size:0.72rem;
+    background:rgba(20,20,31,0.75); border:1px solid var(--line); backdrop-filter:blur(10px);
+    box-shadow:0 8px 24px rgba(0,0,0,0.4); animation:chipFloat 6s ease-in-out infinite;
+  }
+  .chip span{color:var(--cyan);}
+  .chip.c1{top:6%; left:2%; animation-delay:0s;}
+  .chip.c2{top:18%; right:0%; animation-delay:1.2s;}
+  .chip.c3{bottom:22%; left:-2%; animation-delay:2.1s;}
+  .chip.c4{bottom:4%; right:6%; animation-delay:3s;}
+  .chip.c5{top:48%; left:78%; animation-delay:0.6s;}
+  @keyframes chipFloat{ 0%,100%{transform:translateY(0px);} 50%{transform:translateY(-14px);} }
+
+  /* ---------- SECTION SHELL ---------- */
+  .wrap{max-width:1200px; margin:0 auto; padding:120px 6vw; position:relative;}
+  .wrap.tight{padding-top:80px; padding-bottom:80px;}
+  .section-head{max-width:640px; margin-bottom:56px;}
+  .section-head .eyebrow{margin-bottom:14px;}
+  .section-head h2{ font-family:var(--font-head); font-size:clamp(1.8rem,3.4vw,2.6rem); font-weight:700; letter-spacing:-0.5px; }
+  .section-head p{margin-top:14px; color:rgba(244,244,248,0.62); font-size:1.02rem;}
+
+  .reveal{opacity:0; transform:translateY(36px); transition:opacity 0.7s ease, transform 0.7s ease;}
+  .reveal.in{opacity:1; transform:translateY(0);}
+
+  /* ---------- ABOUT + mock visuals ---------- */
+  .about-grid{display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:center;}
+  .about-panel{ padding:34px; border-radius:20px; background:var(--panel); border:1px solid var(--line); backdrop-filter:blur(14px); }
+  .about-panel p{color:rgba(244,244,248,0.72); font-size:1.02rem;}
+  .about-mini-stats{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:26px;}
+  .mini-stat{padding:16px; border-radius:14px; border:1px solid var(--line); background:rgba(255,255,255,0.02);}
+  .mini-stat .n{font-family:var(--font-mono); font-weight:700; color:var(--cyan); font-size:1.1rem;}
+  .mini-stat .l{font-size:0.78rem; color:rgba(244,244,248,0.55); margin-top:2px;}
+
+  .mock-row{display:flex; flex-direction:column; gap:16px; margin-top:26px;}
+  .mock-card{
+    border-radius:16px; padding:16px 18px; border:1px solid var(--line); backdrop-filter:blur(12px);
+    display:flex; align-items:center; gap:14px;
+  }
+  .mock-card.dash{background:linear-gradient(120deg, rgba(0,224,255,0.14), rgba(26,26,46,0.5));}
+  .mock-card.thumb{background:linear-gradient(120deg, rgba(255,0,0,0.14), rgba(26,26,46,0.5));}
+  .mock-card.graph{background:linear-gradient(120deg, rgba(123,47,247,0.18), rgba(26,26,46,0.5));}
+  .mock-icon{width:44px; height:44px; border-radius:12px; flex-shrink:0; display:flex; align-items:center; justify-content:center;}
+  .mock-card.dash .mock-icon{background:rgba(0,224,255,0.18);}
+  .mock-card.thumb .mock-icon{background:rgba(255,0,0,0.18);}
+  .mock-card.graph .mock-icon{background:rgba(123,47,247,0.22);}
+  .mock-text .t{font-weight:600; font-size:0.92rem;}
+  .mock-text .s{font-size:0.78rem; color:rgba(244,244,248,0.55);}
+
+  /* ---------- SERVICES ---------- */
+  .service-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:24px;}
+  .tilt-card{
+    padding:30px 26px; border-radius:20px; background:var(--panel); border:1px solid var(--line);
+    backdrop-filter:blur(14px); transform-style:preserve-3d; transition:transform 0.15s ease, border-color 0.3s ease;
+    position:relative; overflow:hidden;
+  }
+  .tilt-card::before{
+    content:''; position:absolute; top:-40%; left:-40%; width:180%; height:180%;
+    background:radial-gradient(circle, rgba(255,0,0,0.10), transparent 60%);
+    opacity:0; transition:opacity 0.3s ease; pointer-events:none;
+  }
+  .tilt-card:hover::before{opacity:1;}
+  .tilt-card:hover{border-color:rgba(0,224,255,0.35);}
+  .tilt-card .num{font-family:var(--font-mono); color:var(--red); font-size:0.8rem; letter-spacing:1px;}
+  .tilt-card h3{font-family:var(--font-head); font-size:1.18rem; margin:12px 0 10px; font-weight:600;}
+  .tilt-card p{font-size:0.92rem; color:rgba(244,244,248,0.6);}
+  .tilt-card ul{margin-top:12px; padding-left:0; list-style:none;}
+  .tilt-card ul li{font-size:0.85rem; color:rgba(244,244,248,0.55); padding:5px 0 5px 18px; position:relative;}
+  .tilt-card ul li::before{content:'▹'; position:absolute; left:0; color:var(--cyan);}
+
+  /* ---------- SWIPEABLE STEPS CAROUSEL ---------- */
+  .steps-wrap{position:relative;}
+  .steps-track{
+    display:flex; gap:22px; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:10px;
+    cursor:grab; scrollbar-width:none; -ms-overflow-style:none;
+  }
+  .steps-track::-webkit-scrollbar{display:none;}
+  .steps-track.dragging{cursor:grabbing; scroll-snap-type:none;}
+  .step-card{
+    min-width:270px; flex-shrink:0; scroll-snap-align:start; padding:28px 24px; border-radius:20px;
+    background:linear-gradient(150deg, rgba(26,26,46,0.7), rgba(10,10,15,0.5)); border:1px solid var(--line);
+    backdrop-filter:blur(14px); user-select:none;
+  }
+  .step-card .step-badge{
+    width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-mono); font-weight:700; font-size:0.95rem; border:2px solid var(--red); margin-bottom:16px;
+    background:var(--bg);
+  }
+  .step-card h4{font-family:var(--font-head); font-size:1.05rem; font-weight:600; margin-bottom:8px;}
+  .step-card p{color:rgba(244,244,248,0.6); font-size:0.9rem;}
+  .steps-nav{display:flex; justify-content:space-between; align-items:center; margin-top:22px;}
+  .steps-dots{display:flex; gap:8px;}
+  .step-dot{width:8px; height:8px; border-radius:50%; background:var(--line); cursor:pointer; transition:background 0.3s;}
+  .step-dot.active{background:var(--red); width:22px; border-radius:6px;}
+  .steps-arrows{display:flex; gap:10px;}
+  .arrow-btn{
+    width:40px; height:40px; border-radius:50%; border:1px solid var(--line); background:rgba(255,255,255,0.04);
+    color:var(--white); font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    transition:all 0.2s ease;
+  }
+  .arrow-btn:hover{border-color:var(--cyan); color:var(--cyan);}
+  .swipe-hint{font-family:var(--font-mono); font-size:0.72rem; color:rgba(244,244,248,0.4); letter-spacing:0.5px;}
+
+  /* ---------- PRICING ---------- */
+  .pricing-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:26px;}
+  .price-card{
+    padding:34px 28px; border-radius:22px; background:linear-gradient(160deg, rgba(26,26,46,0.7), rgba(10,10,15,0.5));
+    border:1px solid var(--line); backdrop-filter:blur(16px); transform-style:preserve-3d;
+    transition:transform 0.15s ease, box-shadow 0.3s ease; position:relative;
+  }
+  .price-card.highlight{border-color:rgba(255,0,0,0.4); box-shadow:0 20px 60px rgba(255,0,0,0.15);}
+  .price-card .badge{
+    position:absolute; top:-12px; right:26px; background:var(--red); font-size:0.68rem; padding:5px 12px;
+    border-radius:100px; font-family:var(--font-mono); letter-spacing:0.5px; box-shadow:0 4px 14px rgba(255,0,0,0.5);
+  }
+  .price-card .tier-name{font-family:var(--font-mono); font-size:0.75rem; color:var(--cyan); letter-spacing:1.5px; text-transform:uppercase;}
+  .price-card h3{font-family:var(--font-head); font-size:1.4rem; margin:10px 0 20px; font-weight:700;}
+  .price-card ul{list-style:none;}
+  .price-card li{ padding:9px 0; border-top:1px solid var(--line); font-size:0.9rem; color:rgba(244,244,248,0.75); display:flex; gap:10px; align-items:flex-start; }
+  .price-card li::before{content:'—'; color:var(--red); flex-shrink:0;}
+  .price-card .cta-row{margin-top:26px; display:flex; flex-direction:column; gap:10px;}
+  .price-card .cta-row a{width:100%; text-align:center; justify-content:center;}
+
+  /* ---------- STATS ---------- */
+  .stats-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
+  .stat-card{ text-align:center; padding:40px 20px; border-radius:20px; background:var(--panel); border:1px solid var(--line); backdrop-filter:blur(14px); }
+  .stat-card .counter{
+    font-family:var(--font-mono); font-size:2.6rem; font-weight:700;
+    background:linear-gradient(120deg, var(--white), var(--cyan)); -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .stat-card .lbl{margin-top:8px; font-size:0.85rem; color:rgba(244,244,248,0.6); text-transform:uppercase; letter-spacing:1px;}
+
+  /* ---------- TESTIMONIALS ---------- */
+  .carousel-wrap{position:relative; overflow:hidden;}
+  .carousel-track{display:flex; gap:24px; transition:transform 0.6s cubic-bezier(0.6,0,0.2,1);}
+  .test-card{ min-width:340px; flex-shrink:0; padding:30px; border-radius:20px; background:var(--panel); border:1px solid var(--line); backdrop-filter:blur(14px); }
+  .test-card .quote{font-size:0.98rem; color:rgba(244,244,248,0.82); font-style:normal;}
+  .test-card .who{margin-top:20px; display:flex; align-items:center; gap:12px;}
+  .avatar{ width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg, var(--red), var(--cyan)); display:flex; align-items:center; justify-content:center; font-family:var(--font-head); font-weight:700; font-size:0.85rem; }
+  .who .name{font-weight:600; font-size:0.9rem;}
+  .who .tag{font-size:0.76rem; color:rgba(244,244,248,0.5);}
+  .carousel-dots{display:flex; gap:8px; justify-content:center; margin-top:28px;}
+  .dot{width:8px; height:8px; border-radius:50%; background:var(--line); cursor:pointer; transition:background 0.3s;}
+  .dot.active{background:var(--red);}
+
+  /* ---------- FAQ ---------- */
+  .faq-item{border-bottom:1px solid var(--line);}
+  .faq-q{ padding:22px 4px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; font-family:var(--font-head); font-weight:600; font-size:1.02rem; }
+  .faq-q .plus{font-family:var(--font-mono); font-size:1.2rem; color:var(--red); transition:transform 0.3s;}
+  .faq-item.open .plus{transform:rotate(45deg);}
+  .faq-a{max-height:0; overflow:hidden; transition:max-height 0.35s ease; color:rgba(244,244,248,0.62); font-size:0.94rem;}
+  .faq-a p{padding-bottom:22px;}
+
+  /* ---------- CONTACT ---------- */
+  .contact-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px;}
+  .contact-card{
+    padding:28px 24px; border-radius:20px; background:var(--panel); border:1px solid var(--line); backdrop-filter:blur(14px);
+    display:flex; flex-direction:column; gap:10px; transition:transform 0.25s ease, border-color 0.25s ease;
+  }
+  .contact-card:hover{transform:translateY(-4px); border-color:rgba(0,224,255,0.35);}
+  .contact-card .c-icon{width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; background:rgba(255,0,0,0.14);}
+  .contact-card.wa .c-icon{background:rgba(37,211,102,0.18);}
+  .contact-card.mail .c-icon{background:rgba(0,224,255,0.16);}
+  .contact-card .c-label{font-family:var(--font-mono); font-size:0.72rem; color:rgba(244,244,248,0.5); text-transform:uppercase; letter-spacing:1px;}
+  .contact-card .c-value{font-weight:600; font-size:1rem; word-break:break-word;}
+
+  /* ---------- FINAL CTA ---------- */
+  .final-cta{
+    text-align:center; padding:110px 6vw; position:relative; overflow:hidden;
+    background:radial-gradient(700px 400px at 50% 0%, rgba(255,0,0,0.14), transparent 70%);
+  }
+  .final-cta h2{font-family:var(--font-head); font-size:clamp(2rem,4vw,3rem); font-weight:700; max-width:760px; margin:0 auto 30px;}
+  .final-ctas{display:flex; gap:16px; justify-content:center; flex-wrap:wrap;}
+
+  /* ---------- FOOTER ---------- */
+  footer{padding:50px 6vw; border-top:1px solid var(--line); display:flex; justify-content:space-between; flex-wrap:wrap; gap:20px;}
+  footer .foot-left{color:rgba(244,244,248,0.5); font-size:0.85rem;}
+  .foot-links{display:flex; gap:20px; font-size:0.85rem; color:rgba(244,244,248,0.55); flex-wrap:wrap;}
+  .foot-links a:hover{color:var(--cyan);}
+
+  /* ---------- FLOATING WHATSAPP ---------- */
+  .wa-float{
+    position:fixed; bottom:26px; right:26px; z-index:200; width:58px; height:58px; border-radius:50%;
+    background:#25D366; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 26px rgba(37,211,102,0.5);
+    animation:waPulse 2.4s ease-in-out infinite;
+  }
+  @keyframes waPulse{ 0%,100%{box-shadow:0 8px 26px rgba(37,211,102,0.5);} 50%{box-shadow:0 8px 40px rgba(37,211,102,0.85);} }
+
+  @media (max-width:900px){
+    .hero-grid, .about-grid{grid-template-columns:1fr;}
+    .service-grid, .pricing-grid, .stats-grid, .contact-grid{grid-template-columns:1fr;}
+    .orb-stage{height:340px; margin-top:20px;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="noise"></div>
+<div class="bg-glow"></div>
+<div class="blob" style="width:260px; height:260px; background:var(--red); top:12%; left:6%;"></div>
+<div class="blob" style="width:320px; height:320px; background:var(--cyan); top:40%; right:4%; animation-delay:4s;"></div>
+<div class="blob" style="width:280px; height:280px; background:var(--purple); bottom:8%; left:10%; animation-delay:8s;"></div>
+<div class="blob" style="width:220px; height:220px; background:var(--magenta); bottom:30%; right:14%; animation-delay:2s;"></div>
+
+<nav>
+  <div class="logo">D<span class="i-play">i</span>gihub</div>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#services">Services</a>
+    <a href="#process">Process</a>
+    <a href="#how-youtube-works">How It Works (YT)</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <button class="nav-cta open-modal" data-plan="General Booking" data-price="">
+    <svg class="wa-icon" viewBox="0 0 24 24" fill="white"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.71.45 3.38 1.3 4.86L2 22l5.35-1.4a9.9 9.9 0 0 0 4.69 1.19h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2Z"/></svg>
+    Book My Slot
+  </button>
+</nav>
+
+<section class="hero">
+  <div class="hero-grid">
+    <div>
+      <div class="hero-badge">🎬 Limited Onboarding Slots — This Month Only</div>
+      <div class="eyebrow">Faceless Channel Growth Agency</div>
+      <h1>Your faceless channel, <span class="accent">produced daily</span> until it monetizes.</h1>
+      <p class="sub">Digihub Marketing runs the whole pipeline — niche strategy, daily video production, SEO and channel optimization — so a faceless channel becomes a real, monetized asset instead of a stalled experiment.</p>
+      <div class="hero-ctas">
+        <button class="btn-primary open-modal" data-plan="General Booking" data-price="">
+          <svg class="wa-icon" viewBox="0 0 24 24" fill="white"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.71.45 3.38 1.3 4.86L2 22l5.35-1.4a9.9 9.9 0 0 0 4.69 1.19h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2Z"/></svg>
+          Book My Slot
+        </button>
+        <a href="#services" class="btn-secondary">See What We Deliver</a>
+      </div>
+      <div class="hero-stats-inline">
+        <div><div class="num" id="hs1">0</div><div class="lbl">Channels Set Up</div></div>
+        <div><div class="num" id="hs2">0</div><div class="lbl">Videos / Month</div></div>
+        <div><div class="num" id="hs3">0</div><div class="lbl">Avg. Days To Eligibility</div></div>
+      </div>
+    </div>
+    <div class="orb-stage" id="orbStage">
+      <div class="ring ring1"></div>
+      <div class="ring ring2"></div>
+      <div class="orb-core" id="orbCore">
+        <div class="orb-face"></div>
+        <div class="orb-play"></div>
+      </div>
+      <div class="chip c1">SEO <span>optimized</span></div>
+      <div class="chip c2">Script → <span>Voiceover</span></div>
+      <div class="chip c3">Thumbnail <span>A/B</span></div>
+      <div class="chip c4">Watch time <span>↑</span></div>
+      <div class="chip c5">Upload <span>daily</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="snapshots">
+  <div class="wrap tight">
+    <div class="section-head reveal">
+      <div class="eyebrow">A Look Inside</div>
+      <h2>What the day-to-day actually looks like.</h2>
+    </div>
+    <div class="carousel-wrap reveal">
+      <div class="carousel-track" id="snapTrack">
+        <div class="snap-card">
+          <svg viewBox="0 0 260 150" width="100%" height="140">
+            <rect x="0" y="0" width="260" height="150" rx="14" fill="#14141f"/>
+            <rect x="18" y="100" width="24" height="34" rx="4" fill="#ff2fa0"/>
+            <rect x="52" y="80" width="24" height="54" rx="4" fill="#00e0ff"/>
+            <rect x="86" y="60" width="24" height="74" rx="4" fill="#ff0000"/>
+            <rect x="120" y="40" width="24" height="94" rx="4" fill="#7b2ff7"/>
+            <rect x="154" y="70" width="24" height="64" rx="4" fill="#00e0ff"/>
+            <circle cx="220" cy="55" r="30" fill="none" stroke="#ff2fa0" stroke-width="8" stroke-dasharray="140 200" stroke-linecap="round" transform="rotate(-90 220 55)"/>
+            <text x="220" y="60" fill="#f4f4f8" font-size="14" text-anchor="middle" font-family="monospace">72%</text>
+          </svg>
+          <div class="snap-label">Weekly Channel Dashboard</div>
+        </div>
+        <div class="snap-card">
+          <svg viewBox="0 0 260 150" width="100%" height="140">
+            <rect x="0" y="0" width="260" height="150" rx="14" fill="#14141f"/>
+            <defs>
+              <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff0000"/><stop offset="1" stop-color="#7b2ff7"/></linearGradient>
+              <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#00e0ff"/><stop offset="1" stop-color="#ff2fa0"/></linearGradient>
+            </defs>
+            <rect x="20" y="30" width="90" height="60" rx="8" fill="url(#g1)"/>
+            <rect x="150" y="30" width="90" height="60" rx="8" fill="url(#g2)"/>
+            <polygon points="58,50 58,70 75,60" fill="white"/>
+            <polygon points="188,50 188,70 205,60" fill="white"/>
+            <text x="65" y="108" fill="#f4f4f8" font-size="11" text-anchor="middle" font-family="monospace">Variant A</text>
+            <text x="195" y="108" fill="#f4f4f8" font-size="11" text-anchor="middle" font-family="monospace">Variant B</text>
+            <text x="130" y="65" fill="#f4f4f8" font-size="12" text-anchor="middle" font-family="monospace">VS</text>
+          </svg>
+          <div class="snap-label">Thumbnail A/B Testing</div>
+        </div>
+        <div class="snap-card">
+          <svg viewBox="0 0 260 150" width="100%" height="140">
+            <rect x="0" y="0" width="260" height="150" rx="14" fill="#14141f"/>
+            <defs><linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#00e0ff"/><stop offset="1" stop-color="#0a0a0f" stop-opacity="0"/></linearGradient></defs>
+            <polygon points="20,120 60,100 100,105 140,70 180,50 220,20 220,134 20,134" fill="url(#g3)" opacity="0.35"/>
+            <polyline points="20,120 60,100 100,105 140,70 180,50 220,20" fill="none" stroke="#00e0ff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="220" cy="20" r="5" fill="#ff2fa0"/>
+          </svg>
+          <div class="snap-label">Growth Trajectory Tracking</div>
+        </div>
+        <div class="snap-card">
+          <svg viewBox="0 0 260 150" width="100%" height="140">
+            <rect x="0" y="0" width="260" height="150" rx="14" fill="#14141f"/>
+            <text x="45" y="58" fill="rgba(244,244,248,0.5)" font-size="10" text-anchor="middle" font-family="monospace">BEFORE</text>
+            <text x="45" y="86" fill="#f4f4f8" font-size="21" text-anchor="middle" font-family="monospace" font-weight="bold">1.2K</text>
+            <defs><marker id="arrowHead" markerWidth="8" markerHeight="8" refX="4" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#ff2fa0"/></marker></defs>
+            <path d="M95 72 L150 72" stroke="#ff2fa0" stroke-width="3" marker-end="url(#arrowHead)"/>
+            <text x="205" y="58" fill="rgba(0,224,255,0.85)" font-size="10" text-anchor="middle" font-family="monospace">AFTER</text>
+            <text x="205" y="86" fill="#00e0ff" font-size="23" text-anchor="middle" font-family="monospace" font-weight="bold">8.4K</text>
+            <text x="130" y="125" fill="rgba(244,244,248,0.6)" font-size="11" text-anchor="middle" font-family="monospace">subscribers in 60 days</text>
+          </svg>
+          <div class="snap-label">Subscriber Growth Snapshot</div>
+        </div>
+        <div class="snap-card">
+          <svg viewBox="0 0 260 150" width="100%" height="140">
+            <rect x="0" y="0" width="260" height="150" rx="14" fill="#14141f"/>
+            <text x="20" y="32" fill="#f4f4f8" font-size="10.5" font-family="monospace">Subscribers · 1,000 goal</text>
+            <rect x="20" y="40" width="220" height="9" rx="4.5" fill="rgba(255,255,255,0.08)"/>
+            <rect x="20" y="40" width="220" height="9" rx="4.5" fill="#ff2fa0"/>
+            <text x="20" y="78" fill="#f4f4f8" font-size="10.5" font-family="monospace">Watch hours · 4,000 goal</text>
+            <rect x="20" y="86" width="220" height="9" rx="4.5" fill="rgba(255,255,255,0.08)"/>
+            <rect x="20" y="86" width="168" height="9" rx="4.5" fill="#00e0ff"/>
+            <circle cx="222" cy="118" r="13" fill="none" stroke="#7b2ff7" stroke-width="2.5"/>
+            <path d="M216 118 l4 4 l9 -9" stroke="#7b2ff7" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <text x="20" y="122" fill="rgba(244,244,248,0.6)" font-size="10" font-family="monospace">Eligibility check</text>
+          </svg>
+          <div class="snap-label">Monetization Eligibility Tracker</div>
+        </div>
+      </div>
+      <div class="carousel-dots" id="snapDots"></div>
+    </div>
+  </div>
+</section>
+
+<section id="results">
+  <div class="wrap tight">
+    <div class="section-head reveal">
+      <div class="eyebrow">Real Client Results</div>
+      <h2>Straight from our clients' own dashboards.</h2>
+      <p>Shared with permission — these are actual screenshots from channels and accounts we've worked with.</p>
+    </div>
+    <div class="carousel-wrap reveal">
+      <div class="carousel-track" id="resultsTrack">
+        <div class="result-card">
+          <img src="assets/results/result-1.avif" alt="Instagram professional dashboard showing follower growth" loading="lazy">
+          <div class="snap-label">Instagram — 50.4K followers, 33.9K accounts reached</div>
+        </div>
+        <div class="result-card">
+          <img src="assets/results/result-2.jpg" alt="YouTube Studio estimated revenue chart" loading="lazy">
+          <div class="snap-label">Early monetization — steady estimated revenue building up</div>
+        </div>
+        <div class="result-card">
+          <img src="assets/results/result-3.png" alt="YouTube monetization status showing full eligibility" loading="lazy">
+          <div class="snap-label">Fully approved — eligible across every monetization tool</div>
+        </div>
+        <div class="result-card">
+          <img src="assets/results/result-4.jpg" alt="Single video analytics showing views and revenue" loading="lazy">
+          <div class="snap-label">Single video — 99.7K views, $1K+ estimated revenue</div>
+        </div>
+        <div class="result-card">
+          <img src="assets/results/result-5.png" alt="YouTube Studio Earn tab showing payout minimum met" loading="lazy">
+          <div class="snap-label">First payout milestone crossed — ready for payment</div>
+        </div>
+        <div class="result-card">
+          <img src="assets/results/result-6.jpg" alt="Channel analytics overview showing views, subscribers and revenue" loading="lazy">
+          <div class="snap-label">Channel scale — 2.8M views, +9K subscribers, €5,096 revenue</div>
+        </div>
+        <div class="result-card">
+          <img src="assets/results/result-7.png" alt="YouTube analytics revenue tab showing monthly earnings" loading="lazy">
+          <div class="snap-label">Steady monthly earnings from monetized playbacks</div>
+        </div>
+        <div class="result-card">
+          <img src="assets/results/result-8.jpeg" alt="Channel analytics dashboard showing long-term revenue" loading="lazy">
+          <div class="snap-label">Long-term growth — $5,131 total estimated revenue</div>
+        </div>
+      </div>
+      <div class="carousel-dots" id="resultsDots"></div>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap tight">
+    <div class="about-grid">
+      <div class="reveal">
+        <div class="eyebrow">Who We Are</div>
+        <h2 style="font-family:var(--font-head); font-size:clamp(1.8rem,3vw,2.4rem); font-weight:700; letter-spacing:-0.5px;">One team, the entire channel operation.</h2>
+        <p style="margin-top:18px; color:rgba(244,244,248,0.65); font-size:1.02rem;">Digihub Marketing is built around one niche: faceless YouTube channels. We handle strategy, production, SEO and optimization end to end, so a creator never has to touch editing software or keyword research to keep a channel moving forward.</p>
+        <div class="mock-row">
+          <div class="mock-card dash">
+            <div class="mock-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00e0ff" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 6h7v7"/></svg></div>
+            <div class="mock-text"><div class="t">Channel dashboard</div><div class="s">Retention, traffic source & watch-time tracked weekly</div></div>
+          </div>
+          <div class="mock-card thumb">
+            <div class="mock-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff0000" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3z" fill="#ff0000" stroke="none"/></svg></div>
+            <div class="mock-text"><div class="t">Thumbnail testing</div><div class="s">Click-through focused variants for every upload</div></div>
+          </div>
+          <div class="mock-card graph">
+            <div class="mock-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7b2ff7" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20V13"/></svg></div>
+            <div class="mock-text"><div class="t">Growth tracking</div><div class="s">Subscriber & watch-hour progress toward eligibility</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="about-panel reveal">
+        <p>Every channel we take on gets a dedicated content calendar, a keyword map for its niche, and a weekly review of what the analytics are actually saying — before we adjust anything.</p>
+        <div class="about-mini-stats">
+          <div class="mini-stat"><div class="n">Daily</div><div class="l">Content delivery cadence</div></div>
+          <div class="mini-stat"><div class="n">Weekly</div><div class="l">Analytics + strategy review</div></div>
+          <div class="mini-stat"><div class="n">End-to-end</div><div class="l">Setup to optimization</div></div>
+          <div class="mini-stat"><div class="n">Niche-first</div><div class="l">Demand & competition mapped</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="services">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">What We Deliver</div>
+      <h2>Everything between an idea and a monetized channel.</h2>
+      <p>Five moving parts, run by one team, so nothing falls between the cracks.</p>
+    </div>
+    <div class="service-grid">
+      <div class="tilt-card reveal">
+        <div class="num">01</div><h3>Channel Setup &amp; Niche Strategy</h3>
+        <p>Full branding, a niche chosen for real demand and low competition, and an About section built for search from day one.</p>
+        <ul><li>Banner, logo & channel theme</li><li>Niche demand vs. competition mapping</li><li>SEO-ready About section</li></ul>
+      </div>
+      <div class="tilt-card reveal">
+        <div class="num">02</div><h3>Daily Video Content</h3>
+        <p>Fully edited faceless videos delivered daily — script, voiceover, visuals, background score and captions, all handled.</p>
+        <ul><li>Script + voiceover recording</li><li>Stock/AI visuals & editing</li><li>Captions + background score</li></ul>
+      </div>
+      <div class="tilt-card reveal">
+        <div class="num">03</div><h3>SEO &amp; Optimization</h3>
+        <p>Titles, descriptions, tags and thumbnails built around what actually drives click-through and watch time in your niche.</p>
+        <ul><li>Keyword-optimized titles & tags</li><li>Thumbnail CTR testing</li><li>Description formatting for search</li></ul>
+      </div>
+      <div class="tilt-card reveal">
+        <div class="num">04</div><h3>Monetization Support</h3>
+        <p>Once a channel crosses the subscriber and watch-hour thresholds, we guide the Partner Program application step by step.</p>
+        <ul><li>Eligibility tracking</li><li>Application walkthrough</li><li>Policy compliance check</li></ul>
+      </div>
+      <div class="tilt-card reveal">
+        <div class="num">05</div><h3>Growth Monitoring</h3>
+        <p>Weekly analytics review — retention, traffic sources, drop-off points — feeding straight back into the next batch of content.</p>
+        <ul><li>Weekly retention report</li><li>Traffic-source breakdown</li><li>Content strategy adjustment</li></ul>
+      </div>
+      <div class="tilt-card reveal" style="display:flex; flex-direction:column; justify-content:center; align-items:flex-start;">
+        <h3 style="margin-top:0;">Want the full breakdown?</h3>
+        <p>Book a slot and we'll map out exactly what your niche needs.</p>
+        <button class="btn-secondary open-modal" data-plan="General Booking" data-price="" style="margin-top:16px;">Book My Slot</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="process">
+  <div class="wrap tight">
+    <div class="section-head reveal">
+      <div class="eyebrow">How It Works</div>
+      <h2>A straight line from booking to monetization eligibility.</h2>
+      <p class="swipe-hint">← swipe or drag to see all 5 steps →</p>
+    </div>
+    <div class="steps-wrap reveal">
+      <div class="steps-track" id="stepsTrack">
+        <div class="step-card"><div class="step-badge">1</div><h4>Book your slot</h4><p>Share your niche preference, and we lock in your onboarding window.</p></div>
+        <div class="step-card"><div class="step-badge">2</div><h4>Channel setup & branding</h4><p>Our team builds out your channel branding and search-optimized profile.</p></div>
+        <div class="step-card"><div class="step-badge">3</div><h4>Daily production begins</h4><p>Faceless videos start going out on a consistent daily schedule.</p></div>
+        <div class="step-card"><div class="step-badge">4</div><h4>Continuous optimization</h4><p>We tune content and SEO week over week, tracking toward monetization criteria.</p></div>
+        <div class="step-card"><div class="step-badge">5</div><h4>Monetization support</h4><p>Once eligible, we guide the application and keep growth tracking active.</p></div>
+      </div>
+      <div class="steps-nav">
+        <div class="steps-dots" id="stepsDots"></div>
+        <div class="steps-arrows">
+          <button class="arrow-btn" id="stepPrev" aria-label="Previous step">‹</button>
+          <button class="arrow-btn" id="stepNext" aria-label="Next step">›</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how-youtube-works">
+  <div class="wrap tight">
+    <div class="section-head reveal">
+      <div class="eyebrow">The Real Picture</div>
+      <h2>How YouTube growth &amp; monetization actually work.</h2>
+      <p>No vague promises — here's the real mechanics behind how a channel goes from zero to earning.</p>
+    </div>
+    <div class="service-grid">
+      <div class="tilt-card reveal">
+        <div class="num">Eligibility</div>
+        <h3>What YouTube actually requires</h3>
+        <p>To join the Partner Program, a channel needs 1,000 subscribers and either 4,000 public watch hours in the last 12 months, or 10 million Shorts views in 90 days — plus a clean copyright and community guidelines record. We track both numbers for you every week.</p>
+      </div>
+      <div class="tilt-card reveal">
+        <div class="num">Daily Engine</div>
+        <h3>Why daily uploads matter</h3>
+        <p>YouTube's algorithm favors channels that post consistently — it has more data points to learn who to recommend your content to. Daily faceless videos keep your channel active in the recommendation system instead of going quiet between uploads.</p>
+      </div>
+      <div class="tilt-card reveal">
+        <div class="num">Algorithm</div>
+        <h3>What actually drives growth</h3>
+        <p>Three signals matter most: click-through rate (does the thumbnail/title earn a click), average view duration (do people keep watching), and session time (does your video keep people on YouTube). Every script and thumbnail we make is built around these three.</p>
+      </div>
+      <div class="tilt-card reveal">
+        <div class="num">Monetization</div>
+        <h3>After you're eligible</h3>
+        <p>Once thresholds are hit, we walk you through the AdSense linking and Partner Program application, then shift focus to ad revenue optimization, mid-roll placement, and — for Gold &amp; Diamond plans — a digital product to add a second income stream beyond ads.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Our Packages</div>
+      <h2>Elite, Gold &amp; Diamond — pick your growth tier.</h2>
+      <p>Every plan starts with the same ₹2,000 slot booking. The rest is split across setup and final handover — never charged all at once.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card reveal">
+        <div class="tier-name">Elite</div>
+        <h3>₹7,000 <span class="price-sub">total</span></h3>
+        <ul>
+          <li>Reels bundle</li>
+          <li>Daily video upload guidance</li>
+          <li>Full account setup</li>
+          <li>Niche selection</li>
+        </ul>
+        <button class="btn-secondary open-modal" data-plan="Elite" data-price="₹7,000" style="width:100%; justify-content:center; margin-top:22px;">Book Elite Slot</button>
+      </div>
+      <div class="price-card highlight reveal">
+        <div class="badge">MOST BOOKED</div>
+        <div class="tier-name">Gold</div>
+        <h3>₹12,000 <span class="price-sub">total</span></h3>
+        <ul>
+          <li>Everything in Elite</li>
+          <li>Guided account monetization</li>
+          <li>A ready digital product built for you</li>
+          <li>24/7 customer support</li>
+          <li>Instagram &amp; YouTube optimization</li>
+        </ul>
+        <button class="btn-primary open-modal" data-plan="Gold" data-price="₹12,000" style="width:100%; justify-content:center; margin-top:22px;">Book Gold Slot</button>
+      </div>
+      <div class="price-card reveal">
+        <div class="tier-name">Diamond</div>
+        <h3>₹22,000 <span class="price-sub">total</span></h3>
+        <ul>
+          <li>Everything in Gold</li>
+          <li>SEO, tags &amp; hashtag optimization</li>
+          <li>Ads setup guidance</li>
+          <li>Digital product + revenue monetization support</li>
+          <li>Priority support</li>
+        </ul>
+        <button class="btn-secondary open-modal" data-plan="Diamond" data-price="₹22,000" style="width:100%; justify-content:center; margin-top:22px;">Book Diamond Slot</button>
+      </div>
+    </div>
+
+    <div class="payment-steps reveal">
+      <h3 class="pay-steps-title">How the payment is split — same structure for every plan</h3>
+      <div class="pay-steps-grid">
+        <div class="pay-step"><div class="pay-step-n">1</div><div><strong>Slot Booking — ₹2,000</strong><p>Secures your onboarding slot. Same across Elite, Gold and Diamond.</p></div></div>
+        <div class="pay-step"><div class="pay-step-n">2</div><div><strong>Setup Confirmation — ₹5,000</strong><p>Charged once account setup and content production begins.</p></div></div>
+        <div class="pay-step"><div class="pay-step-n">3</div><div><strong>Balance on Handover</strong><p>Remaining amount is paid once your account is handed over and earning.</p></div></div>
+      </div>
+      <p class="refund-note">💛 Refund assurance: if revenue generation isn't achieved as promised for your plan, the amount you've paid is refunded in full.</p>
+    </div>
+  </div>
+</section>
+
+<section id="track-record">
+  <div class="wrap tight">
+    <div class="section-head reveal">
+      <div class="eyebrow">Our Track Record</div>
+      <h2>What the pipeline has produced so far.</h2>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card reveal"><div class="counter" data-target="180">0</div><div class="lbl">Channels Set Up</div></div>
+      <div class="stat-card reveal"><div class="counter" data-target="2400">0</div><div class="lbl">Videos Delivered Monthly</div></div>
+      <div class="stat-card reveal"><div class="counter" data-target="62">0</div><div class="lbl">Avg. Days To Monetization Eligibility</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="testimonials">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">What Creators Say</div>
+      <h2>Feedback from channels we've onboarded.</h2>
+    </div>
+    <div class="carousel-wrap reveal">
+      <div class="carousel-track" id="carTrack">
+        <div class="test-card"><p class="quote">"Onboarding was quick — I gave them my niche on a Monday call and content was already going out by that weekend."</p><div class="who"><div class="avatar">R</div><div><div class="name">Rohit M.</div><div class="tag">Faceless finance channel</div></div></div></div>
+        <div class="test-card"><p class="quote">"The branding and thumbnail style they set up made the channel look far more established than a week-old account."</p><div class="who"><div class="avatar">S</div><div><div class="name">Simran K.</div><div class="tag">History &amp; facts channel</div></div></div></div>
+        <div class="test-card"><p class="quote">"Whenever I've had a question about the weekly report, someone actually replies the same day with a clear answer."</p><div class="who"><div class="avatar">A</div><div><div class="name">Aman D.</div><div class="tag">Tech explainer channel</div></div></div></div>
+        <div class="test-card"><p class="quote">"Daily uploads never slipped, even during weeks I completely forgot to check in on the channel myself."</p><div class="who"><div class="avatar">P</div><div><div class="name">Priya S.</div><div class="tag">Motivation channel</div></div></div></div>
+        <div class="test-card"><p class="quote">"The niche consultation call alone saved me from picking a category that was already saturated."</p><div class="who"><div class="avatar">K</div><div><div class="name">Karan V.</div><div class="tag">Space &amp; science channel</div></div></div></div>
+      </div>
+      <div class="carousel-dots" id="carDots"></div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap tight" style="max-width:800px;">
+    <div class="section-head reveal">
+      <div class="eyebrow">FAQ</div>
+      <h2>Common questions</h2>
+    </div>
+    <div id="faqList">
+      <div class="faq-item reveal">
+        <div class="faq-q">How long does channel setup take?<span class="plus">+</span></div>
+        <div class="faq-a"><p>Branding and profile setup are typically completed within the first few days after your onboarding call, and daily content begins right after.</p></div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q">What niches do you support?<span class="plus">+</span></div>
+        <div class="faq-a"><p>We work across most faceless-friendly niches — facts, finance basics, history, motivation, tech and more — and help you pick one based on demand and competition during the consultation call.</p></div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q">How many videos are delivered per week?<span class="plus">+</span></div>
+        <div class="faq-a"><p>Content goes out on a daily schedule once production begins, keeping the channel consistently active in front of the algorithm and your audience.</p></div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q">What happens after monetization eligibility is reached?<span class="plus">+</span></div>
+        <div class="faq-a"><p>We guide you through the Partner Program application and continue growth tracking and analytics reporting so momentum doesn't stall afterward.</p></div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q">How do I pay for a package?<span class="plus">+</span></div>
+        <div class="faq-a"><p>Payment is split in three parts for every plan: ₹2,000 to book your slot, ₹5,000 once setup begins, and the remaining balance only after your account is handed over and earning. Payments are completed through our secure Instamojo link.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap tight">
+    <div class="section-head reveal">
+      <div class="eyebrow">Contact Us</div>
+      <h2>Talk to us directly, no forms to fill.</h2>
+    </div>
+    <div class="contact-grid">
+      <a href="https://wa.me/919714690087?text=Hi%20Digihub%2C%20I%20have%20a%20question" target="_blank" class="contact-card wa reveal">
+        <div class="c-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="#25D366"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.71.45 3.38 1.3 4.86L2 22l5.35-1.4a9.9 9.9 0 0 0 4.69 1.19h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2Z"/></svg></div>
+        <div class="c-label">WhatsApp</div>
+        <div class="c-value">+91 97146 90087</div>
+      </a>
+      <a href="mailto:vogoner485@gmail.com" class="contact-card mail reveal">
+        <div class="c-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00e0ff" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg></div>
+        <div class="c-label">Email</div>
+        <div class="c-value">vogoner485@gmail.com</div>
+      </a>
+      <a href="tel:+919714690087" class="contact-card reveal">
+        <div class="c-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff0000" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+        <div class="c-label">Call / Phone</div>
+        <div class="c-value">+91 97146 90087</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="final-cta" id="book">
+  <div class="eyebrow" style="justify-content:center;">Ready when you are</div>
+  <h2>Ready to build your faceless channel?</h2>
+  <div class="final-ctas">
+    <button class="btn-primary open-modal" data-plan="General Booking" data-price="" style="font-size:1.05rem; padding:18px 40px;">
+      <svg class="wa-icon" viewBox="0 0 24 24" fill="white"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.71.45 3.38 1.3 4.86L2 22l5.35-1.4a9.9 9.9 0 0 0 4.69 1.19h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2Z"/></svg>
+      Get Started With Digihub Marketing
+    </button>
+    <a href="https://wa.me/919714690087?text=Hi%20Digihub%2C%20I%20want%20to%20know%20more%20about%20your%20plans" target="_blank" class="btn-pay" style="font-size:0.95rem; padding:18px 30px;">
+      <svg class="wa-icon" viewBox="0 0 24 24" fill="#00e0ff"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.71.45 3.38 1.3 4.86L2 22l5.35-1.4a9.9 9.9 0 0 0 4.69 1.19h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2Z"/></svg>
+      Talk to Us on WhatsApp
+    </a>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-left">© 2026 Digihub Marketing — YouTube Faceless Channel Growth Agency.</div>
+  <div class="foot-links">
+    <a href="#about">About</a>
+    <a href="#services">Services</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#faq">FAQ</a>
+    <a href="mailto:vogoner485@gmail.com">vogoner485@gmail.com</a>
+    <a href="tel:+919714690087">+91 97146 90087</a>
+    <a href="https://wa.me/919714690087" target="_blank">WhatsApp</a>
+  </div>
+</footer>
+
+<a href="https://wa.me/919714690087?text=Hi%20Digihub%2C%20I%20want%20to%20know%20more" target="_blank" class="wa-float" aria-label="Chat on WhatsApp">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.71.45 3.38 1.3 4.86L2 22l5.35-1.4a9.9 9.9 0 0 0 4.69 1.19h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2Z"/></svg>
+</a>
+
+<div class="modal-overlay" id="bookingModal">
+  <div class="modal-box">
+    <button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
+    <div class="eyebrow" style="margin-bottom:6px;">Slot Booking</div>
+    <h3 id="modalPlanTitle" style="font-family:var(--font-head); font-size:1.3rem; font-weight:700;">Book Your Slot</h3>
+    <p class="modal-price" id="modalPlanPrice">Slot Booking: ₹2,000</p>
+
+    <form id="bookingForm" name="slot-booking" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+      <input type="hidden" name="form-name" value="slot-booking" />
+      <input type="hidden" name="plan" id="formPlan" value="General Booking" />
+      <p style="display:none;"><label>Don't fill this out: <input name="bot-field" /></label></p>
+
+      <label>Full Name
+        <input type="text" name="name" id="fName" required>
+      </label>
+      <label>WhatsApp / Contact Number
+        <input type="tel" name="phone" id="fPhone" placeholder="+91XXXXXXXXXX" required>
+      </label>
+      <label>Email
+        <input type="email" name="email" id="fEmail" required>
+      </label>
+      <label>Preferred Niche
+        <input type="text" name="niche" id="fNiche" placeholder="e.g. Finance, History, Motivation" required>
+      </label>
+      <label>What kind of videos do you want on this niche?
+        <textarea name="content_type" id="fContent" rows="2" placeholder="e.g. facts-style shorts, storytelling, top-10 lists"></textarea>
+      </label>
+
+      <button type="submit" class="btn-primary" style="width:100%; justify-content:center; margin-top:18px;">Submit Details</button>
+    </form>
+
+    <div class="modal-success" id="modalSuccess" style="display:none;">
+      <p>✅ Details received! Tap below to continue on WhatsApp — our team will confirm your slot and share the payment link personally.</p>
+      <a href="#" id="successWA" target="_blank" class="btn-primary" style="width:100%; justify-content:center; margin-top:14px;">
+        <svg class="wa-icon" viewBox="0 0 24 24" fill="white"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.71.45 3.38 1.3 4.86L2 22l5.35-1.4a9.9 9.9 0 0 0 4.69 1.19h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2Z"/></svg>
+        Continue on WhatsApp
+      </a>
+    </div>
+  </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, {threshold:0.15});
+  revealEls.forEach(el=>io.observe(el));
+
+  // Animated counters
+  function animateCounter(el, target, suffix){
+    const duration = 1600; const startTime = performance.now();
+    function tick(now){
+      const p = Math.min((now-startTime)/duration, 1);
+      const eased = 1 - Math.pow(1-p, 3);
+      el.textContent = Math.floor(eased*target) + (suffix||'');
+      if(p<1) requestAnimationFrame(tick);
+      else el.textContent = target + (suffix||'');
     }
-
-    return jsonResponse({ order_id: data.id, amount: data.amount, currency: data.currency });
-  } catch (err) {
-    return jsonResponse({ error: 'Razorpay order creation failed', details: err.message || 'Unknown error' }, 500);
+    requestAnimationFrame(tick);
   }
-}
+  const counterEls = document.querySelectorAll('.counter');
+  const cio = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const target = parseInt(e.target.getAttribute('data-target'),10);
+        animateCounter(e.target, target, '+');
+        cio.unobserve(e.target);
+      }
+    });
+  }, {threshold:0.4});
+  counterEls.forEach(el=>cio.observe(el));
+
+  window.addEventListener('load', ()=>{
+    animateCounter(document.getElementById('hs1'), 180, '+');
+    animateCounter(document.getElementById('hs2'), 2400, '+');
+    animateCounter(document.getElementById('hs3'), 62, '');
+  });
+
+  // Tilt effect
+  document.querySelectorAll('.tilt-card, .price-card').forEach(card=>{
+    card.addEventListener('mousemove', (e)=>{
+      const r = card.getBoundingClientRect();
+      const x = e.clientX - r.left; const y = e.clientY - r.top;
+      const rx = ((y / r.height) - 0.5) * -10;
+      const ry = ((x / r.width) - 0.5) * 10;
+      card.style.transform = 'perspective(800px) rotateX(' + rx + 'deg) rotateY(' + ry + 'deg) translateY(-4px)';
+    });
+    card.addEventListener('mouseleave', ()=>{ card.style.transform = 'perspective(800px) rotateX(0) rotateY(0) translateY(0)'; });
+  });
+
+  // Parallax on hero orb
+  const orbStage = document.getElementById('orbStage');
+  const orbCore = document.getElementById('orbCore');
+  window.addEventListener('scroll', ()=>{
+    const y = window.scrollY;
+    if(orbStage) orbStage.style.transform = 'translateY(' + (y*0.15) + 'px)';
+  });
+  document.addEventListener('mousemove', (e)=>{
+    if(!orbCore) return;
+    const relX = (e.clientX / window.innerWidth - 0.5) * 20;
+    const relY = (e.clientY / window.innerHeight - 0.5) * 20;
+    orbCore.style.marginLeft = relX + 'px';
+    orbCore.style.marginTop = relY + 'px';
+  });
+
+  // Reusable auto-swipe carousel (used for testimonials + snapshot visuals)
+  function makeAutoCarousel(trackId, dotsId, intervalMs){
+    const track = document.getElementById(trackId);
+    const dotsWrap = document.getElementById(dotsId);
+    if(!track || !dotsWrap) return;
+    const cards = track.children;
+    let idx = 0;
+    function cardWidth(){ return cards[0].getBoundingClientRect().width + 24; }
+    function buildDots(){
+      dotsWrap.innerHTML='';
+      for(let i=0;i<cards.length;i++){
+        const d = document.createElement('div');
+        d.className = 'dot' + (i===0?' active':'');
+        d.addEventListener('click', ()=>{ idx=i; update(); reset(); });
+        dotsWrap.appendChild(d);
+      }
+    }
+    function update(){
+      track.style.transform = 'translateX(-' + (idx*cardWidth()) + 'px)';
+      [...dotsWrap.children].forEach((d,i)=>d.classList.toggle('active', i===idx));
+    }
+    buildDots();
+    let timer;
+    function reset(){
+      clearInterval(timer);
+      timer = setInterval(()=>{ idx = (idx+1)%cards.length; update(); }, intervalMs);
+    }
+    reset();
+    window.addEventListener('resize', update);
+  }
+  makeAutoCarousel('carTrack', 'carDots', 3800);
+  makeAutoCarousel('snapTrack', 'snapDots', 4200);
+  makeAutoCarousel('resultsTrack', 'resultsDots', 4600);
+
+  // Booking modal
+  const bookingModal = document.getElementById('bookingModal');
+  const modalClose = document.getElementById('modalClose');
+  const modalPlanTitle = document.getElementById('modalPlanTitle');
+  const modalPlanPrice = document.getElementById('modalPlanPrice');
+  const formPlanInput = document.getElementById('formPlan');
+  const bookingForm = document.getElementById('bookingForm');
+  const modalSuccess = document.getElementById('modalSuccess');
+  const successWA = document.getElementById('successWA');
+
+  document.querySelectorAll('.open-modal').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      e.preventDefault();
+      const plan = btn.getAttribute('data-plan') || 'General Booking';
+      const price = btn.getAttribute('data-price') || '';
+      modalPlanTitle.textContent = (plan === 'General Booking') ? 'Book Your Slot' : (plan + ' Plan');
+      modalPlanPrice.textContent = price ? ('Plan total: ' + price + '  •  Slot Booking: ₹2,000') : 'Slot Booking: ₹2,000';
+      formPlanInput.value = plan;
+      bookingForm.reset();
+      formPlanInput.value = plan;
+      bookingForm.style.display = 'block';
+      modalSuccess.style.display = 'none';
+      bookingModal.classList.add('active');
+    });
+  });
+  modalClose.addEventListener('click', ()=>bookingModal.classList.remove('active'));
+  bookingModal.addEventListener('click', (e)=>{ if(e.target === bookingModal) bookingModal.classList.remove('active'); });
+
+  bookingForm.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const formData = new FormData(bookingForm);
+    fetch('/', {
+      method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body:new URLSearchParams(formData).toString()
+    }).catch(()=>{}).finally(()=>{
+      const name = document.getElementById('fName').value;
+      const phone = document.getElementById('fPhone').value;
+      const email = document.getElementById('fEmail').value;
+      const niche = document.getElementById('fNiche').value;
+      const content = document.getElementById('fContent').value;
+      const plan = formPlanInput.value;
+      const msgLines = [
+        'Hi Digihub, I just submitted my slot booking form.',
+        'Name: ' + name,
+        'Phone: ' + phone,
+        'Email: ' + email,
+        'Plan: ' + plan,
+        'Niche: ' + niche,
+        'Content type: ' + content
+      ];
+      const msg = encodeURIComponent(msgLines.join('\n'));
+      successWA.href = 'https://wa.me/919714690087?text=' + msg;
+      bookingForm.style.display = 'none';
+      modalSuccess.style.display = 'block';
+    });
+  });
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-item').forEach(item=>{
+    const q = item.querySelector('.faq-q');
+    const a = item.querySelector('.faq-a');
+    q.addEventListener('click', ()=>{
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(o=>{ o.classList.remove('open'); o.querySelector('.faq-a').style.maxHeight=null; });
+      if(!isOpen){ item.classList.add('open'); a.style.maxHeight = a.scrollHeight + 'px'; }
+    });
+  });
+
+  // Swipeable "How It Works" steps carousel
+  const stepsTrack = document.getElementById('stepsTrack');
+  const stepsDotsWrap = document.getElementById('stepsDots');
+  const stepCards = stepsTrack.children;
+  function buildStepDots(){
+    stepsDotsWrap.innerHTML = '';
+    for(let i=0;i<stepCards.length;i++){
+      const d = document.createElement('div');
+      d.className = 'step-dot' + (i===0?' active':'');
+      d.addEventListener('click', ()=>scrollToStep(i));
+      stepsDotsWrap.appendChild(d);
+    }
+  }
+  function scrollToStep(i){
+    const card = stepCards[i];
+    stepsTrack.scrollTo({ left: card.offsetLeft - stepsTrack.offsetLeft, behavior:'smooth' });
+  }
+  buildStepDots();
+  let currentStep = 0;
+  function updateActiveStepDot(){
+    const trackLeft = stepsTrack.scrollLeft;
+    let closest = 0; let minDist = Infinity;
+    for(let i=0;i<stepCards.length;i++){
+      const dist = Math.abs(stepCards[i].offsetLeft - stepsTrack.offsetLeft - trackLeft);
+      if(dist < minDist){ minDist = dist; closest = i; }
+    }
+    currentStep = closest;
+    [...stepsDotsWrap.children].forEach((d,i)=>d.classList.toggle('active', i===closest));
+  }
+  stepsTrack.addEventListener('scroll', ()=>{ window.requestAnimationFrame(updateActiveStepDot); });
+  document.getElementById('stepPrev').addEventListener('click', ()=>{ if(currentStep>0) scrollToStep(currentStep-1); });
+  document.getElementById('stepNext').addEventListener('click', ()=>{ if(currentStep<stepCards.length-1) scrollToStep(currentStep+1); });
+
+  // Drag-to-swipe (mouse) support for desktop, in addition to native touch scroll
+  let isDown = false, startX, scrollLeftStart;
+  stepsTrack.addEventListener('mousedown', (e)=>{
+    isDown = true; stepsTrack.classList.add('dragging');
+    startX = e.pageX - stepsTrack.offsetLeft; scrollLeftStart = stepsTrack.scrollLeft;
+  });
+  window.addEventListener('mouseup', ()=>{ isDown=false; stepsTrack.classList.remove('dragging'); updateActiveStepDot(); });
+  stepsTrack.addEventListener('mousemove', (e)=>{
+    if(!isDown) return; e.preventDefault();
+    const x = e.pageX - stepsTrack.offsetLeft;
+    const walk = (x - startX) * 1.2;
+    stepsTrack.scrollLeft = scrollLeftStart - walk;
+  });
+
+  // ---------- Razorpay Standard Checkout ----------
+  // Public key only — the secret key never appears in frontend code.
+  const RAZORPAY_KEY_ID = 'rzp_test_TCCqKHy28NuF2x';
+
+  async function startRazorpayCheckout(amountRupees, description, prefill){
+    try{
+      const orderRes = await fetch('/api/create-order', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ amount: Math.round(amountRupees * 100), currency:'INR', receipt:'slot_' + Date.now() })
+      });
+      const orderData = await orderRes.json();
+      if(!orderRes.ok){
+        alert('Could not start payment: ' + (orderData.error || 'Please try again or contact us on WhatsApp.'));
+        return;
+      }
+
+      const options = {
+        key: RAZORPAY_KEY_ID,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: 'Digihub Marketing',
+        description: description || 'Slot Booking',
+        order_id: orderData.order_id,
+        prefill: prefill || {},
+        theme: { color: '#ff0000' },
+        handler: async function(response){
+          try{
+            const verifyRes = await fetch('/api/verify-payment', {
+              method:'POST',
+              headers:{'Content-Type':'application/json'},
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature
+              })
+            });
+            const verifyData = await verifyRes.json();
+            if(verifyRes.ok && verifyData.verified){
+              alert('Payment verified! Your slot is confirmed — we will reach out on WhatsApp shortly.');
+            } else {
+              alert('Payment received but could not be verified automatically. Please message us on WhatsApp with payment ID: ' + response.razorpay_payment_id);
+            }
+          } catch(err){
+            alert('Payment received but verification failed to run. Please message us on WhatsApp with payment ID: ' + response.razorpay_payment_id);
+          }
+        },
+        modal: {
+          ondismiss: function(){ /* user closed the checkout without paying */ }
+        }
+      };
+
+      const rzp = new Razorpay(options);
+      rzp.on('payment.failed', function(response){
+        const reason = (response && response.error && response.error.description) ? response.error.description : 'Please try again.';
+        alert('Payment failed: ' + reason);
+      });
+      rzp.open();
+    } catch(err){
+      alert('Something went wrong starting the payment. Please try again or contact us on WhatsApp.');
+    }
+  }
+
+  const payNowBtn = document.getElementById('payNowBtn');
+  if(payNowBtn){
+    payNowBtn.addEventListener('click', ()=>{
+      startRazorpayCheckout(2000, 'Slot Booking - ' + (formPlanInput ? formPlanInput.value : 'General'), {
+        name: document.getElementById('fName') ? document.getElementById('fName').value : '',
+        email: document.getElementById('fEmail') ? document.getElementById('fEmail').value : '',
+        contact: document.getElementById('fPhone') ? document.getElementById('fPhone').value : ''
+      });
+    });
+  }
+
+  const payNowBtnFinal = document.getElementById('payNowBtnFinal');
+  if(payNowBtnFinal){
+    payNowBtnFinal.addEventListener('click', ()=>{
+      startRazorpayCheckout(2000, 'Slot Booking');
+    });
+  }
+</script>
+
+</body>
+</html>
