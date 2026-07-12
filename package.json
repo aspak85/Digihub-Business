@@ -1,9 +1,0 @@
-{
-  "name": "digihub-marketing-site",
-  "version": "1.0.0",
-  "private": true,
-  "description": "Digihub Marketing landing page with Razorpay Standard Checkout via Netlify Functions",
-  "dependencies": {
-    "razorpay": "^2.9.4"
-  }
-}
