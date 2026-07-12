@@ -41,4 +41,3 @@ Same as before — either:
 
 ## Testing
 Same as before — test card `4111 1111 1111 1111`, any future expiry, any CVV/OTP, since the Razorpay key is still in test mode.
-<!-- redeploy -->
