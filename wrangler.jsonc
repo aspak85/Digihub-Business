@@ -1,5 +1,5 @@
 {
-  "name": "digihub-businesss",
+  "name": "tracker",
   "compatibility_date": "2026-07-12",
   "compatibility_flags": ["nodejs_compat"],
   "main": "worker.js",
